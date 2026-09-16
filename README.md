@@ -5,6 +5,8 @@
 
 **Играть: https://d1m4a.github.io/kotik/**
 
+![Кот спит на комоде под окном, слева часы с маятником](docs/screenshot.png)
+
 Публикуется автоматически из ветки `main` — см. `.github/workflows/deploy.yml`.
 
 Полный дизайн-документ — `C:\dc\cat-game-plan (1).md` (локальный файл, в репозиторий не входит).
@@ -197,6 +199,7 @@ node tools/trace-cat.cjs C:/dc/cat5.png --preview   # обводка силуэ�
 node tools/preview-cat.cjs out.png 3                # кадры кота без браузера
 node tools/preview-cat.cjs out.png 3 --pose=loaf:4  # укладывание по шагам
 node tools/preview-cat.cjs out.png 3 --front        # кот анфас
+node tools/screenshot.cjs                            # скриншот комнаты для README
 node tools/make-audio.cjs                           # перегенерировать синтезированный звук
 node tools/import-audio.cjs f.wav purr-deep --loop   # подставить свою запись
 ```
