@@ -111,12 +111,22 @@ const STATES = {
       // Запоминаем счётчик ввода: разбудит ЛЮБОЕ следующее нажатие,
       // но не то, которым кота уложили.
       cat.wakeSeq = intent.seq;
+      cat.sleepTime = 0;
       cat.deps.onSleepStart(cat.spot);
     },
     update(cat, dt, intent) {
       if (intent.seq !== cat.wakeSeq) {
         intent.clearTarget();
         intent.consumeAction();
+        cat.setState(STATE.WAKING);
+        return;
+      }
+      // Выспался — встаёт сам и идёт к стене. Отдельного таймера бездействия
+      // тут не надо: спящего будит любое нажатие, так что счёт и так идёт
+      // ровно с того момента, как его перестали трогать.
+      cat.sleepTime += dt;
+      if (cat.sleepTime >= CONFIG.SLEEP_TIMEOUT) {
+        cat.wakeTo = STATE.GOING_TO_WALL;
         cat.setState(STATE.WAKING);
       }
     },
@@ -127,9 +137,13 @@ const STATES = {
 
   [STATE.WAKING]: {
     enter(cat) {
+      // wakeTo — куда идти, встав. Разбуженный игроком кот просто остаётся
+      // стоять, выспавшийся сам уходит к стене.
+      const next = cat.wakeTo || STATE.IDLE_STAND;
+      cat.wakeTo = null;
       cat.playOnce(poseAnims(cat.spot.pose).wake, () => {
-        if (cat.spot.surface) cat.hopTo(cat.floorY(), () => cat.setState(STATE.IDLE_STAND));
-        else cat.setState(STATE.IDLE_STAND);
+        if (cat.spot.surface) cat.hopTo(cat.floorY(), () => cat.setState(next));
+        else cat.setState(next);
       });
     },
     update() {},
