@@ -48,11 +48,16 @@ function readMask(file) {
   return { w, h, mask };
 }
 
+// Буфер на три байта в пикселе пишется как RGB, на четыре — как RGBA:
+// круглой иконке нужна прозрачность за пределами круга.
 function writePNG(file, w, h, rgb) {
-  const rawOut = Buffer.alloc(h * (1 + w * 3));
+  const ch = rgb.length / (w * h);
+  if (ch !== 3 && ch !== 4) throw new Error('ожидалось 3 или 4 байта на пиксель, вышло ' + ch);
+  const stride = w * ch;
+  const rawOut = Buffer.alloc(h * (1 + stride));
   for (let y = 0; y < h; y++) {
-    rawOut[y * (1 + w * 3)] = 0;
-    rgb.copy(rawOut, y * (1 + w * 3) + 1, y * w * 3, (y + 1) * w * 3);
+    rawOut[y * (1 + stride)] = 0;
+    rgb.copy(rawOut, y * (1 + stride) + 1, y * stride, (y + 1) * stride);
   }
   const T = [];
   for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; T[n] = c >>> 0; }
@@ -65,7 +70,7 @@ function writePNG(file, w, h, rgb) {
     return Buffer.concat([len, td, cb]);
   };
   const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(w, 0); ihdr.writeUInt32BE(h, 4); ihdr[8] = 8; ihdr[9] = 2;
+  ihdr.writeUInt32BE(w, 0); ihdr.writeUInt32BE(h, 4); ihdr[8] = 8; ihdr[9] = ch === 4 ? 6 : 2;
   fs.writeFileSync(file, Buffer.concat([
     Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
     chunk('IHDR', ihdr), chunk('IDAT', zlib.deflateSync(rawOut)), chunk('IEND', Buffer.alloc(0)),
