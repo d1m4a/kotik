@@ -200,6 +200,7 @@ node tools/preview-cat.cjs out.png 3                # кадры кота без
 node tools/preview-cat.cjs out.png 3 --pose=loaf:4  # укладывание по шагам
 node tools/preview-cat.cjs out.png 3 --front        # кот анфас
 node tools/screenshot.cjs                            # скриншот комнаты для README
+node tools/make-favicon.cjs                          # иконки вкладки из силуэта кота
 node tools/make-audio.cjs                           # перегенерировать синтезированный звук
 node tools/import-audio.cjs f.wav purr-deep --loop   # подставить свою запись
 ```
