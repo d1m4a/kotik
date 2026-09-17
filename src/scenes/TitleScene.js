@@ -27,7 +27,7 @@ export class TitleScene extends Phaser.Scene {
     pencilRect(g, WIDTH / 2 - 92, HEIGHT / 2 + 26, 184, 46, { color: HEX.GRAPHITE_2, alpha: 0.9, width: 1.3 });
 
     this.add
-      .text(WIDTH / 2, HEIGHT / 2 - 90, 'Котьик', {
+      .text(WIDTH / 2, HEIGHT / 2 - 90, 'КотЪ', {
         fontFamily: 'Georgia, serif',
         fontSize: '46px',
         color: PALETTE.GRAPHITE_1,
